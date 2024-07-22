@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import session from 'express-session';
-import connectToDb from "../src/config/databaseConfig";
-
+import connectToDb from '../src/config/databaseConfig';
 import commonRouter from './routes/commonRoutes';
 
 dotenv.config();
