@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import UserModel from '../model/userModel';
 import adminSignUpService from '../services/registration';
 import { ERRORS, ACCOUNT_MESSAGES } from '../constants/registrationMessages';
 
 const register = (req: Request, res: Response) => {
-    const newRegistrationData: UserModel = req.body;
+    const newRegistrationData = req.body;
     adminSignUpService
         .isAccountPresent(newRegistrationData.userName, newRegistrationData.email)
         .then(({ userExists, emailExists }) => {
@@ -21,12 +20,14 @@ const register = (req: Request, res: Response) => {
             return adminSignUpService.saveAccount(newRegistrationData);
         })
         .then(responseAfterRegistration => {
+            console.log('After registration:', responseAfterRegistration)
             return res.status(201).json({ message: ACCOUNT_MESSAGES.REGISTRATION_SUCCESS });
         })
         .catch(error => {
             if (error.message === ERRORS.EMAIL_EXISTS || error.message === ERRORS.USERNAME_EXISTS) {
                 return res.status(409).json({ message: error.message });
             }
+            console.log(error);
             return res.status(500).json({ message: ERRORS.USER_CREATION_ERROR });
         });
 };

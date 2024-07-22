@@ -3,8 +3,9 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import session from 'express-session';
+import connectToDb from "../src/config/databaseConfig";
+
 import commonRouter from './routes/commonRoutes';
-import scannerRouter from './routes/scannerRoutes';
 
 dotenv.config();
 
@@ -25,8 +26,9 @@ app.use(cors({
     exposedHeaders: ["*"]
 }));
 
+connectToDb();
+
 app.use('/common', commonRouter);
-app.use('/scan', scannerRouter);
 
 app.listen(port, () => {
     console.log(`Server is running at  http://localhost:${port}`);

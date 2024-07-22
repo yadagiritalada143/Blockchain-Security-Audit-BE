@@ -1,4 +1,5 @@
-import UserModel from '../model/userModel';
+import { model } from 'mongoose';
+import models from '../model/userModel';
 import user from '../types/user';
 import bcrypt from 'bcrypt';
 
@@ -19,14 +20,15 @@ const hashPassword = async (password: string) => {
 
 const getUserDetails = (email: string): Promise<FetchUserResponse> => {
     return new Promise((resolve, reject) => {
-        UserModel.findOne({ where: { email } })
-            .then(user => {
+        models.UserModel.findOne({ email })
+            .then((user: any) => {
                 if (!user) {
                     resolve({ success: false });
                 } else {
                     resolve({
                         success: true,
                         user: {
+                            id: user.id,
                             firstName: user.firstName,
                             lastName: user.lastName,
                             userName: user.userName,
@@ -37,7 +39,7 @@ const getUserDetails = (email: string): Promise<FetchUserResponse> => {
                     });
                 }
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error('Error in fetching details:', error);
                 reject({ success: false });
             });
@@ -45,20 +47,27 @@ const getUserDetails = (email: string): Promise<FetchUserResponse> => {
 }
 
 const updateProfile = async (userDetailsToUpdate: user): Promise<UpdateProfileResponse> => {
-    let { firstName, lastName, userName, password, mobileNumber, email } = userDetailsToUpdate;
-    const hashedPassword = await hashPassword(password);
-    return new Promise((resolve, reject) => {
-        UserModel
-            .update({ firstName, lastName, userName, password: hashedPassword, mobileNumber }, { where: { email: email } })
-            .then((responseAfterUpdateProfile) => {
+    return new Promise(async (resolve, reject) => {
+        userDetailsToUpdate.password = await hashPassword(userDetailsToUpdate.password);
+        const result = await models.UserModel.updateOne(
+            { email: userDetailsToUpdate.email },
+            {
+                firstName: userDetailsToUpdate.firstName,
+                lastName: userDetailsToUpdate.lastName,
+                userName: userDetailsToUpdate.userName,
+                password: userDetailsToUpdate.password,
+                mobileNumber: userDetailsToUpdate.mobileNumber
+            })
+            .then((responseAfterUpdateProfile: any) => {
                 resolve({
                     success: true
                 });
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error('Error in updating Profile:', error);
                 reject({ success: false });
             });
+
     });
 }
 

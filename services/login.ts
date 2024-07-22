@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import UserModel from '../model/userModel';
+import models from '../model/userModel';
 import dotenv from 'dotenv';
 import csrf from 'csrf-token';
 dotenv.config();
@@ -13,7 +13,7 @@ interface LoginCredentials {
 
 interface AuthResponse {
     success: boolean;
-    id?: number;
+    id?: string;
     role?: string;
     token?: string;
 }
@@ -30,9 +30,9 @@ const createCSRFToken = (): Promise<string> => {
 };
 
 const authenticateAccount = ({ email, password }: LoginCredentials): Promise<AuthResponse> => {
-    return new Promise((resolve, reject) => {
-        UserModel.findOne({ where: { email } })
-            .then(user => {
+    return new Promise(async (resolve, reject) => {
+        await models.UserModel.findOne({ email })
+            .then((user: { password: string; email: string; userRole: string; id: string; }) => {
                 if (!user) {
                     resolve({ success: false });
                 } else {
@@ -46,7 +46,7 @@ const authenticateAccount = ({ email, password }: LoginCredentials): Promise<Aut
                     });
                 }
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error('Error in authentication:', error);
                 reject({ success: false });
             });

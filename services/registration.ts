@@ -1,4 +1,4 @@
-import UserModel from "../model/userModel";
+import models from "../model/userModel";
 import User from "../types/user";
 import bcrypt from 'bcrypt';
 
@@ -9,19 +9,18 @@ const hashPassword = (password: string) => {
 };
 
 const isAccountPresent = async (userName: string, email: string) => {
-    const userExists = await UserModel.findOne({ where: { userName: userName } })
-        .then(user => !!user);
-
-    const emailExists = await UserModel.findOne({ where: { email: email } })
-        .then(user => !!user);
+    const userExists = await models.UserModel.findOne({ userName: userName }).then((user: any) => !!user);
+    const emailExists = await models.UserModel.findOne({ email: email }).then((user: any) => !!user);
 
     return Promise.all([userExists, emailExists])
         .then(([userExists, emailExists]) => ({ userExists, emailExists }));
 }
 
-const saveAccount = (userData: User) => {
-    return UserModel.create(userData);
-}
+const saveAccount = async (userData: User) => {
+    const userDataToSave = new models.UserModel({ ...userData });
 
+    const result = await userDataToSave.save();
+    return result;
+}
 
 export default { hashPassword, isAccountPresent, saveAccount };
