@@ -24,4 +24,15 @@ const getBlocksByUser = (req: Request, res: Response) => {
         });
 }
 
-export default { generateBlocks, getBlocksByUser };
+const deleteBlockById = (req: Request, res: Response) => {
+    const { id } = req.body;
+    bsaService.deleteBlockById(id)
+        .then((responseAfterBlockDeleted) => {
+            res.status(200).json({ success: true });
+        })
+        .catch((error: any) => {
+            res.status(500).json({ success: false, message: 'Error in deleting Block !' })
+        });
+}
+
+export default { generateBlocks, getBlocksByUser, deleteBlockById };

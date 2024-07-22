@@ -49,4 +49,15 @@ const getBlocksByUser = (email: string) => {
     })
 }
 
-export default { generateBlocks, getBlocksByUser }
+const deleteBlockById = (id: string) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const blocksResponse = await models.BsaModel.deleteOne({ _id: id });
+            resolve(blocksResponse);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+export default { generateBlocks, getBlocksByUser, deleteBlockById }
