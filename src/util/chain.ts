@@ -70,7 +70,6 @@ export class AuditLogBlockchain {
         if (precedingBlockInfo) {
             let id = new mongoose.Types.ObjectId().toHexString();
             let currentBlockInfo = new Block(id, payload.email, payload, '' + new Date().getTime(), precedingBlockInfo.hash,);
-            console.log('currentBlockInfo is:', currentBlockInfo);
             return await this.addNewBlock(currentBlockInfo);
         }
         return false;

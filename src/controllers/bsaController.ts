@@ -5,12 +5,23 @@ import bsaService from '../services/bsa';
 const generateBlocks = async (req: Request, res: Response) => {
     const { email, action_array } = req.body;
     await bsaService.generateBlocks(email, action_array)
-        .then((responseAfterBlocks) => {
-            res.status(200).json(responseAfterBlocks);
+        .then((responseAfterBlocksCreated) => {
+            res.status(200).json({ success: true, data: responseAfterBlocksCreated });
         })
         .catch(error => {
-            res.status(500).json({ message: 'Error in generating blocks !' })
+            res.status(500).json({ success: false, message: 'Error in generating blocks !' });
         });
 }
 
-export default { generateBlocks };
+const getBlocksByUser = (req: Request, res: Response) => {
+    const { email } = req.params;
+    bsaService.getBlocksByUser(email)
+        .then((responseAfterBlocksFetched) => {
+            res.status(200).json({ success: true, data: responseAfterBlocksFetched });
+        })
+        .catch((error: any) => {
+            res.status(500).json({ success: false, message: 'Error in fetching blocks !' })
+        });
+}
+
+export default { generateBlocks, getBlocksByUser };

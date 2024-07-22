@@ -19,7 +19,6 @@ const generateBlocks = async (email: string, action_array: string | any[]) => {
             created_on: new Date().getTime()
         };
         logger.info(`New Block Request: ${payload.ref_id}`);
-        console.log('At service is:', payload)
         let entry = await blockChain.createTransaction(payload);
         logger.info(`New Transaction: ${entry.id}`);
     }
@@ -38,4 +37,16 @@ const generateBlocks = async (email: string, action_array: string | any[]) => {
     })
 }
 
-export default { generateBlocks }
+
+const getBlocksByUser = (email: string) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const blocksResponse = await models.BsaModel.find({ email: email });
+            resolve(blocksResponse);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+export default { generateBlocks, getBlocksByUser }
