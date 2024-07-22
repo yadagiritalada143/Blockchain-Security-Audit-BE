@@ -5,6 +5,7 @@ import cors from 'cors';
 import session from 'express-session';
 import connectToDb from '../src/config/databaseConfig';
 import commonRouter from './routes/commonRoutes';
+import bsaRouter from './routes/bsaRoutes';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use(cors({
 connectToDb();
 
 app.use('/common', commonRouter);
+app.use('/bsa', bsaRouter);
 
 app.listen(port, () => {
     console.log(`Server is running at  http://localhost:${port}`);
